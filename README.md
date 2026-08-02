@@ -1,11 +1,11 @@
 # 🧩 Data Modeling Project: Messy Dataset to Star Schema – Power BI
 
 ### 🔗 [My LinkedIn](https://www.linkedin.com/in/saleh2023/)
-### 📥 [Download the PBIX File](https://github.com/M-Eltaquee/power-bi-nightmare-data-model/blob/main/Dashboard.pbix?raw=true)
+### 📥 [Download the PBIX File](https://github.com/M-Eltaquee/power-bi-nightmare-data-model/blob/main/dataset/Dashboard.pbix?raw=true)
 
 <br>
 <div align="center">
-  <img src="assets/final-schema.png" alt="Final Star Schema" width="1000">
+  <img src="assets/preview.gif?raw=true" alt="Final Star Schema" width="1000">
 </div>
 
 ---
@@ -71,27 +71,29 @@ Used to validate the rebuilt model, not the focus of the project:
 ## 📐 Data Model
 
 **Before**
-<img src="assets/initial-schema.png" width="1000">
+<img src="assets/3%20initial%20shcema%20-%20screenshot.png?raw=true" width="1000">
 
 **After**
-<img src="assets/final-schema.png" width="1000">
+<img src="assets/4%20final%20shcema%20-%20screenshot.png?raw=true" width="1000">
 
 ---
 
 ## 🗂️ Query Organization
-<img src="assets/query-folders.png" width="500">
+<img src="assets/POWER%20query.png?raw=true" width="500">
 
 35 queries organized into a staged pipeline: **01_Stage** (23) → **02_Dimensions** (5) → **03_Facts** (6) → **4_Support**, so the transformation logic is traceable from raw source to final table.
 
 ---
 
 ## 📈 Validation Dashboard
-<img src="assets/dashboard-overview.png" width="1000">
+<img src="assets/6%20dashboard%20%20-%20screenshot.png?raw=true" width="1000">
+<img src="assets/6%20dashboard%20visiuals%20%20-%20screenshot.png?raw=true" width="1000">
+<img src="assets/7%20dashboard%20KPIs%20-%20screenshot.png?raw=true" width="1000">
 
 ---
 
 ## 🎥 Project Demo
-<img src="assets/demo.gif" width="1000">
+<img src="assets/preview.gif?raw=true" width="1000">
 
 ---
 
@@ -123,16 +125,17 @@ This project reflects the same discipline used in restructuring the Sheaffer/Wil
 power-bi-nightmare-data-model/
 │
 ├── assets/
-│   ├── initial-schema.png
-│   ├── final-schema.png
-│   ├── query-folders.png
-│   ├── dashboard-overview.png
-│   └── demo.gif
+│   ├── 3 initial shcema - screenshot.png
+│   ├── 4 final shcema - screenshot.png
+│   ├── 6 dashboard  - screenshot.png
+│   ├── 6 dashboard visiuals  - screenshot.png
+│   ├── 7 dashboard KPIs - screenshot.png
+│   ├── POWER query.png
+│   └── preview.gif
 │
-├── data/
-│   └── dataset.xlsx
-│
-├── Dashboard.pbix
+├── dataset/
+│   ├── 0 dataset.xlsx
+│   └── Dashboard.pbix
 │
 └── README.md
 ```
