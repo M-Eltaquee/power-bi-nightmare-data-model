@@ -2,6 +2,7 @@
 
 ### 🔗 [My LinkedIn](https://www.linkedin.com/in/saleh2023/)
 ### 📥 [Download the PBIX File](https://github.com/M-Eltaquee/power-bi-nightmare-data-model/blob/main/dataset/Dashboard.pbix?raw=true)
+**📄 [Full Documentation](https://github.com/M-Eltaquee/power-bi-nightmare-data-model/edit/main/PROJECT-DOCUMENTATION.html)**
 
 <br>
 <div align="center">
