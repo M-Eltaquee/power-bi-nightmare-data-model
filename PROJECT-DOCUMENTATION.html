@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Telecom Customer Churn Analysis — Overview</title>
+<style>
+:root{
+  --accent:#1F4E79;
+  --navy:#0D1117;
+  --green:#3FB950;
+  --red:#DB2B33;
+  --card:#161B22;
+  --border:#2A313C;
+  --text1:#E6EDF3;
+  --text2:#B6BEC7;
+  --text3:#8B929A;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--navy);color:var(--text1);font-family:"Segoe UI",-apple-system,Arial,sans-serif;}
+body{display:flex;min-height:100vh;}
+
+#sidebar{
+  position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;
+  width:230px;flex:none;background:#0A0D12;border-right:1px solid var(--border);
+  padding:24px 14px 40px;
+}
+#sidebar h1{font-size:16px;margin:0 0 18px;line-height:1.3;}
+nav.toc a{
+  display:block;padding:9px 10px;border-radius:6px;color:var(--text2);
+  text-decoration:none;font-size:13.5px;border-left:2px solid transparent;margin-bottom:1px;
+}
+nav.toc a:hover{background:var(--card);color:var(--text1);}
+nav.toc a.active{background:rgba(31,78,121,.25);color:var(--text1);border-left-color:var(--accent);font-weight:600;}
+
+#main{flex:1;min-width:0;padding:44px 56px 100px;max-width:900px;}
+section{margin-bottom:56px;scroll-margin-top:20px;}
+section h2{font-size:24px;margin:0 0 6px;}
+section > .lede{color:var(--text2);font-size:15px;margin:8px 0 24px;line-height:1.6;max-width:680px;}
+h3{font-size:16px;margin:24px 0 10px;color:var(--text1);}
+p{color:var(--text2);font-size:14px;line-height:1.65;}
+b{color:var(--text1);}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+.grid{display:grid;gap:14px;}
+.grid-2{grid-template-columns:1fr 1fr;}
+.grid-3{grid-template-columns:1fr 1fr 1fr;}
+.grid-4{grid-template-columns:1.2fr 1fr 1fr 1fr;}
+.grid-6{grid-template-columns:repeat(6,1fr);}
+@media(max-width:760px){.grid-2,.grid-3,.grid-4,.grid-6{grid-template-columns:1fr;}}
+
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+.kpi .label{font-size:12px;color:var(--text3);}
+.kpi .value{font-size:22px;font-weight:700;margin-top:6px;}
+.kpi.hero{border-color:var(--accent);background:rgba(31,78,121,.15);}
+
+.bar-row{display:flex;align-items:center;gap:12px;margin:8px 0;}
+.bar-row .label{width:150px;font-size:13px;color:var(--text2);flex:none;}
+.bar-track{flex:1;background:#0F1620;border-radius:5px;height:18px;overflow:hidden;}
+.bar-fill{height:100%;background:var(--accent);border-radius:5px;}
+.bar-fill.warn{background:var(--red);}
+.bar-val{width:110px;text-align:right;font-size:13px;color:var(--text2);flex:none;}
+
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;}
+.badge.high{background:rgba(219,43,51,.18);color:#ff8f8c;}
+.badge.medium{background:rgba(31,78,121,.28);color:#8fbce0;}
+.badge.low{background:rgba(139,146,154,.18);color:var(--text2);}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0;}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text2);}
+th{color:var(--text3);font-weight:600;font-size:12px;}
+td.num,th.num{text-align:right;}
+
+.pill-list{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+.pill{font-size:13px;background:var(--card);border:1px solid var(--border);padding:6px 12px;border-radius:999px;color:var(--text2);}
+
+.finding{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+.finding b{display:block;margin-bottom:6px;font-size:14.5px;}
+
+.note{background:rgba(219,43,51,.08);border:1px solid rgba(219,43,51,.3);border-radius:10px;padding:14px 16px;font-size:13.5px;color:var(--text2);}
+.note.ok{background:rgba(63,185,80,.08);border-color:rgba(63,185,80,.3);}
+
+footer{color:var(--text3);font-size:12px;padding:20px 0 60px;border-top:1px solid var(--border);margin-top:10px;}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <h1>Telecom Customer<br>Churn Analysis</h1>
+  <nav class="toc" id="toc">
+    <a href="#about">About This Project</a>
+    <a href="#data">Dataset</a>
+    <a href="#model">Data Model &amp; DAX</a>
+    <a href="#demographic">Page 1 — Demographic</a>
+    <a href="#account">Page 2 — Account Details</a>
+    <a href="#subscription">Page 3 — Subscriptions</a>
+    <a href="#findings">Page 4 — Findings</a>
+    <a href="#recommendations">Page 5 — Recommendations</a>
+    <a href="#issues">Known Issues</a>
+  </nav>
+</aside>
+
+<main id="main">
+
+<section id="about">
+  <h2>About This Project</h2>
+  <p class="lede">A telecom provider needed a clear view of where customer churn was concentrated — which contract types, payment methods, and service subscriptions were driving losses — and how much monthly revenue was at stake. This project analyzes a 7,043-customer telecom dataset to answer that question and turn it into prioritized, actionable recommendations.</p>
+  <div class="card">
+    <p style="margin:0">Built as a 5-page Power BI report (Demographic Analysis, Account Details, Customer Subscription, Findings, Recommendations), with an Intro/start page in front of it. Followed a two-session, DAX-focused build: session 1 covered explicit measures and reused-measure patterns, session 2 covered page navigation, bookmarking, and the Findings/Recommendations pages.</p>
+  </div>
+  <div class="pill-list" style="margin-top:16px">
+    <span class="pill">Power BI</span>
+    <span class="pill">DAX</span>
+    <span class="pill">Power Query</span>
+    <span class="pill">Data Modelling</span>
+  </div>
+</section>
+
+<section id="data">
+  <h2>Dataset</h2>
+  <p class="lede">A single, customer-grain table — a well-known telecom churn dataset, extended with two support-ticket fields. No transaction dates, so no calendar table or time-intelligence layer was needed.</p>
+  <div class="grid grid-3">
+    <div class="kpi hero"><div class="label">Total Customers</div><div class="value">7,043</div></div>
+    <div class="kpi"><div class="label">Fields</div><div class="value">23</div></div>
+    <div class="kpi"><div class="label">Grain</div><div class="value">1 row / customer</div></div>
+  </div>
+  <h3>Field groups</h3>
+  <table>
+    <tr><th>Category</th><th>Fields</th></tr>
+    <tr><td>Identity</td><td>customerID (key only — never used in a slicer or visual)</td></tr>
+    <tr><td>Demographics</td><td>gender, SeniorCitizen, Partner, Dependents</td></tr>
+    <tr><td>Account</td><td>tenure, Contract, PaperlessBilling, PaymentMethod</td></tr>
+    <tr><td>Services</td><td>PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies</td></tr>
+    <tr><td>Billing</td><td>MonthlyCharges, TotalCharges</td></tr>
+    <tr><td>Support</td><td>numAdminTickets, numTechTickets</td></tr>
+    <tr><td>Target</td><td>Churn (Yes/No)</td></tr>
+  </table>
+  <p>customerID is used only inside <b>COUNT()</b> for customer-count measures — no personally identifying field is exposed in any visual, consistent with standard customer-data privacy practice.</p>
+</section>
+
+<section id="model">
+  <h2>Data Model &amp; DAX Approach</h2>
+  <p class="lede">Explicit measures throughout — nothing built on implicit drag-and-drop aggregation.</p>
+  <h3>Core measures</h3>
+  <table>
+    <tr><th>Measure</th><th>Logic</th></tr>
+    <tr><td>Total Customers</td><td>COUNT(customerID)</td></tr>
+    <tr><td>Churn Customers</td><td>CALCULATE([Total Customers], Churn = "Yes")</td></tr>
+    <tr><td>Churn Customers %</td><td>DIVIDE([Churn Customers], [Total Customers])</td></tr>
+    <tr><td>Total Monthly Revenue</td><td>SUM(MonthlyCharges)</td></tr>
+    <tr><td>Monthly Revenue Loss</td><td>CALCULATE([Total Monthly Revenue], Churn = "Yes") — reuses the existing revenue measure instead of rewriting the SUM</td></tr>
+    <tr><td>Revenue Loss %</td><td>DIVIDE([Monthly Revenue Loss], [Total Monthly Revenue])</td></tr>
+  </table>
+  <p>Grouped filters (e.g. multi-value payment-method comparisons) use the <b>IN</b> operator inside CALCULATE rather than nested ORs. Every measure was validated in a plain table visual before it went into a chart.</p>
+</section>
+
+<section id="demographic">
+  <h2>Page 1 — Demographic Analysis</h2>
+  <p class="lede">Who churns, and does it skew by gender, senior-citizen status, partner, or dependent status?</p>
+  <div class="grid grid-6">
+    <div class="kpi hero"><div class="label">Total Customers</div><div class="value">7,043</div></div>
+    <div class="kpi"><div class="label">Churn Customers</div><div class="value">1,869</div></div>
+    <div class="kpi"><div class="label">Churn %</div><div class="value">26.54%</div></div>
+    <div class="kpi"><div class="label">Total Monthly Revenue</div><div class="value">456K</div></div>
+    <div class="kpi"><div class="label">Monthly Revenue Loss</div><div class="value">139.13K</div></div>
+    <div class="kpi"><div class="label">Revenue Loss %</div><div class="value">30.50%</div></div>
+  </div>
+  <h3>Gender split</h3>
+  <div class="bar-row"><span class="label">Male</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">3,555 · 26.16% churn</span></div>
+  <div class="bar-row"><span class="label">Female</span><div class="bar-track"><div class="bar-fill" style="width:98%"></div></div><span class="bar-val">3,488 · 26.92% churn</span></div>
+  <p>Gender shows almost no gap (26.16% vs 26.92%) — not a meaningful churn driver on its own.</p>
+  <h3>Partner &amp; Dependents</h3>
+  <table>
+    <tr><th></th><th class="num">Have Partner — Yes</th><th class="num">Have Partner — No</th><th class="num">Have Dependent — Yes</th><th class="num">Have Dependent — No</th></tr>
+    <tr><td>Share of customers</td><td class="num">48.3%</td><td class="num">51.7%</td><td class="num">29.96%</td><td class="num">70.04%</td></tr>
+  </table>
+  <p>Customers without a partner or without dependents make up the larger share of the churned segment on the donut breakdown (26.54% churned / 73.46% retained overall).</p>
+  <h3>Senior vs. young citizens</h3>
+  <p>Senior Citizens: 1,142 · Young Citizens: 5,901 — senior citizens are a small minority of the base, worth checking as a targeted segment rather than a headline driver given the small sample.</p>
+</section>
+
+<section id="account">
+  <h2>Page 2 — Account Details</h2>
+  <p class="lede">Four tabs: Tenure, Tickets, Charges, Payments — the diagnostic core of the report.</p>
+
+  <h3>Tenure</h3>
+  <div class="grid grid-2">
+    <div class="kpi"><div class="label">Retained — avg tenure</div><div class="value">37.57 mo · 5,174 customers</div></div>
+    <div class="kpi"><div class="label">Churned — avg tenure</div><div class="value">17.98 mo · 1,869 customers</div></div>
+  </div>
+  <h3>Churn rate by contract</h3>
+  <div class="bar-row"><span class="label">Month-to-month</span><div class="bar-track"><div class="bar-fill warn" style="width:100%"></div></div><span class="bar-val">3.9K · 42.71%</span></div>
+  <div class="bar-row"><span class="label">One year</span><div class="bar-track"><div class="bar-fill" style="width:39%"></div></div><span class="bar-val">1.5K · 11.27%</span></div>
+  <div class="bar-row"><span class="label">Two year</span><div class="bar-track"><div class="bar-fill" style="width:7%"></div></div><span class="bar-val">1.7K · 2.83%</span></div>
+
+  <h3>Tickets</h3>
+  <p>Tech Tickets total: 2,955 · Admin/Technical Support total: 3,632.</p>
+  <p>As currently labelled in the report: the "Tech Tickets" chart shows Retained 0.53 vs Churned 0.47, and the "Admin Tickets" chart shows Churned 1.16 vs Retained 0.15. See <a href="#issues" style="color:var(--accent)">Known Issues</a> — this pairing looks swapped against the totals above and against the original build (tech-ticket volume should carry the larger churn gap).</p>
+
+  <h3>Charges</h3>
+  <div class="bar-row"><span class="label">Avg Total Charges</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">Retained $2,555 · Churned $1,532</span></div>
+  <div class="bar-row"><span class="label">Avg Monthly Charges</span><div class="bar-track"><div class="bar-fill warn" style="width:100%"></div></div><span class="bar-val">Churned $74 · Retained $61</span></div>
+  <p>Churned customers pay more per month but accumulate less in total — a direct reflection of shorter tenure, not cheaper service.</p>
+
+  <h3>Payments</h3>
+  <table>
+    <tr><th>Payment Method</th><th class="num">Customers</th><th class="num">Churn %</th></tr>
+    <tr><td>Electronic check</td><td class="num">2,365</td><td class="num" style="color:var(--red)">45.29%</td></tr>
+    <tr><td>Mailed check</td><td class="num">1,612</td><td class="num">19.11%</td></tr>
+    <tr><td>Bank transfer (automatic)</td><td class="num">1,544</td><td class="num">16.71%</td></tr>
+    <tr><td>Credit card (automatic)</td><td class="num">1,522</td><td class="num" style="color:var(--green)">15.24%</td></tr>
+  </table>
+  <p>Paperless Billing: Yes → 4,171 customers, 33.57% churn · No → 2,872 customers, 16.33% churn.</p>
+</section>
+
+<section id="subscription">
+  <h2>Page 3 — Customer Subscription</h2>
+  <p class="lede">Three tabs: Main Services, Additional Services, Streaming.</p>
+
+  <h3>Main Services</h3>
+  <table>
+    <tr><th>Internet Service</th><th class="num">Customers</th><th class="num">Churn %</th></tr>
+    <tr><td>Fiber optic</td><td class="num">3,096</td><td class="num" style="color:var(--red)">41.89%</td></tr>
+    <tr><td>DSL</td><td class="num">2,421</td><td class="num">18.96%</td></tr>
+    <tr><td>No internet</td><td class="num">1,526</td><td class="num" style="color:var(--green)">7.40%</td></tr>
+  </table>
+  <p>Phone Service: Yes → 6,361 customers, 26.71% churn · No → 682 customers, 24.93% churn — a small gap, not a strong driver on its own.</p>
+
+  <h3>Additional Services</h3>
+  <table>
+    <tr><th>Service (No vs Yes)</th><th class="num">Churn % — No</th><th class="num">Churn % — Yes</th></tr>
+    <tr><td>Online Security</td><td class="num" style="color:var(--red)">41.77%</td><td class="num" style="color:var(--green)">14.61%</td></tr>
+    <tr><td>Online Backup</td><td class="num" style="color:var(--red)">39.93%</td><td class="num" style="color:var(--green)">21.53%</td></tr>
+    <tr><td>Device Protection</td><td class="num" style="color:var(--red)">39.13%</td><td class="num" style="color:var(--green)">22.50%</td></tr>
+  </table>
+  <p>Across all three add-ons, customers without the service churn at roughly double the rate of subscribers — the clearest "cheap lever" in the whole report.</p>
+
+  <h3>Streaming</h3>
+  <p>Streaming Movies: No 33.68% churn vs Yes 29.94% · Streaming TV: No 33.52% churn vs Yes 30.07%. Both gaps are small — streaming add-ons don't move churn the way security/backup/protection do.</p>
+</section>
+
+<section id="findings">
+  <h2>Page 4 — Main Findings</h2>
+  <div class="grid grid-2">
+    <div class="finding"><b>26.54% overall churn</b><p style="margin:0">1,869 of 7,043 customers — costing 139K in monthly revenue (30.5% of revenue).</p></div>
+    <div class="finding"><b>Contract type is the strongest driver</b><p style="margin:0">42.71% churn for month-to-month vs 11.27% one-year, 2.83% two-year.</p></div>
+    <div class="finding"><b>Tenure gap</b><p style="margin:0">Churned customers average 17.98 months vs 37.57 for retained.</p></div>
+    <div class="finding"><b>Support tickets track churn</b><p style="margin:0">Large gap between churned and retained ticket volume (see Known Issues for which ticket type).</p></div>
+    <div class="finding"><b>Electronic check payers churn most</b><p style="margin:0">45.29% vs 15–19% for automatic payment methods.</p></div>
+    <div class="finding"><b>Fiber optic churns highest</b><p style="margin:0">41.89% vs 18.96% DSL, 7.40% no internet.</p></div>
+    <div class="finding"><b>Add-ons roughly halve churn</b><p style="margin:0">No security/backup/device-protection customers churn ~2x subscribers.</p></div>
+    <div class="finding"><b>Charges reflect tenure, not price</b><p style="margin:0">Churned pay more monthly ($74 vs $61) but less total ($1,532 vs $2,555).</p></div>
+  </div>
+</section>
+
+<section id="recommendations">
+  <h2>Page 5 — Recommendations</h2>
+  <table>
+    <tr><td>Move month-to-month customers to longer contracts — targeted 1–2 year offers</td><td><span class="badge high">High</span></td></tr>
+    <tr><td>Launch an early-tenure engagement program — proactive outreach in months 1–6</td><td><span class="badge high">High</span></td></tr>
+    <tr><td>Track monthly revenue-at-risk to prioritize which campaigns get funded</td><td><span class="badge high">High</span></td></tr>
+    <tr><td>Flag repeat tech-ticket customers for retention outreach before they churn</td><td><span class="badge medium">Medium</span></td></tr>
+    <tr><td>Investigate the electronic-check segment; incentivize automatic payment</td><td><span class="badge medium">Medium</span></td></tr>
+    <tr><td>Review fiber-optic pricing and reliability — biggest churn segment by service type</td><td><span class="badge medium">Medium</span></td></tr>
+    <tr><td>Bundle security / backup / device protection at signup</td><td><span class="badge low">Low</span></td></tr>
+  </table>
+</section>
+
+<section id="issues">
+  <h2>Known Issues</h2>
+  <div class="note">
+    <b style="color:var(--text1)">Tickets page — chart titles likely swapped.</b> "Tech Tickets" chart shows a flat 0.53/0.47 split; "Admin Tickets" chart shows a wide 1.16/0.15 split. Against the raw totals (Tech: 2,955 · Admin: 3,632) and the original build, the wide gap belongs to Tech tickets. Fix: swap the two chart titles.
+  </div>
+  <br>
+  <div class="note">
+    <b style="color:var(--text1)">Payments page — titles not updated.</b> Both charts were showing "Average Tenure (in Months)" instead of "Paperless Billing" and "Payment Method" — leftover text from copying the Tenure page layout.
+  </div>
+  <br>
+  <div class="note">
+    <b style="color:var(--text1)">Main Services page — Multiple Lines mislabeled as Phone Service.</b> The second "Phone Service" chart's categories (No / Yes / No phone service — 3,390 / 2,971 / 682) match the Multiple Lines field, not Phone Service, which only has Yes/No. Title needs correcting.
+  </div>
+  <br>
+  <div class="note">
+    <b style="color:var(--text1)">Additional Services page — Tech Support missing.</b> The page shows Online Backup, Online Security, and Device Protection, but the fourth panel duplicates the Internet Service chart from the Main Services page instead of showing Tech Support — one of the strongest churn signals in the dataset (41.64% No vs 15.17% Yes in the original build).
+  </div>
+</section>
+
+<footer>Telecom Customer Churn Analysis — Power BI, plain-language project overview.</footer>
+
+</main>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function setActive(id){
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#'+id); });
+  }
+  if('IntersectionObserver' in window){
+    var observer = new IntersectionObserver(function(entries){
+      var visible = entries.filter(function(e){ return e.isIntersecting; });
+      if(visible.length){
+        visible.sort(function(a,b){ return a.boundingClientRect.top - b.boundingClientRect.top; });
+        setActive(visible[0].target.id);
+      }
+    }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+    sections.forEach(function(s){ if(s) observer.observe(s); });
+  }
+})();
+</script>
+
+</body>
+</html>
